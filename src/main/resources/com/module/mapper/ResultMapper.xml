@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.module.mapper.ResultMapper">
+
+    <resultMap type="com.module.pojo.Result" id="WenjuanjieguoResult">
+        <result property="id" column="id"/>
+        <result property="userId" column="userid"/>
+        <result property="username" column="username"/>
+        <result property="wenjuanId" column="wenjuanid"/>
+        <result property="result" column="result"/>
+        <result property="score" column="score"/>
+        <result property="createTime" column="createtime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+    <resultMap type="com.module.pojo.ResultVo" id="WenjuanjieguoVoResult">
+        <result property="id" column="id"/>
+        <result property="userId" column="userid"/>
+        <result property="username" column="username"/>
+        <result property="score" column="total_score"/>
+        <result property="createTime" column="createtime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+    <resultMap type="com.module.pojo.ResultInfo" id="WenjuanInfoResult">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="name" column="name"/>
+        <result property="daan" column="daan"/>
+        <result property="fenshu" column="fenshu"/>
+        <result property="xuanxiang" column="xuanxiang"/>
+        <result property="result" column="result"/>
+        <result property="score" column="score"/>
+        <result property="createtime" column="createtime" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+    </resultMap>
+
+
+    <select id="selectWenjuanjieguoList" parameterType="com.module.pojo.Result" resultMap="WenjuanjieguoResult">
+        select s.id,s.userid,s.username,s.wenjuanId,s.result,s.score,s.createtime from
+        result s
+        <where>
+        </where>
+    </select>
+    <select id="selectWenjuanjieguoById" parameterType="Integer" resultMap="WenjuanjieguoResult">
+        select s.* 
+		from result s
+        where s.id = #{id}
+    </select>
+    <select id="selectWenjuanjieguoByUserId" parameterType="Integer" resultType="integer">
+        select sum(score)
+        from result s
+        where s.userid = #{userId}
+    </select>
+    <select id="selectWenjuanjieguoInfoByUserId" parameterType="Integer" resultMap="WenjuanInfoResult">
+        select s.id,s.username,w.`name`,w.daan,w.fenshu,w.xuanxiang,s.result,s.score,s.createtime
+        from result s left JOIN questionnaire w on s.wenjuanid = w.id
+        where s.userid = #{userId}
+    </select>
+    <select id="selectAll" resultMap="WenjuanjieguoResult">
+        select s.* 
+		from result s
+    </select>
+    <select id="selectAllWenJuan" resultMap="WenjuanjieguoVoResult">
+        select s.*,sum(score) as total_score
+        from result s group by userid
+    </select>
+    <insert id="insertWenjuanjieguo" parameterType="com.module.pojo.Result" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into result (
+        <if test="username != null and username != '' ">username,</if>
+        <if test="userId != null and userId != '' ">userid,</if>
+        <if test="wenjuanId != null and wenjuanId != '' ">wenjuanid,</if>
+        <if test="result != null and result != '' ">result,</if>
+        <if test="score != null and score != '' ">score,</if>
+        <if test="createTime != null">createtime</if>
+        )values(
+        <trim prefixOverrides=",">
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="wenjuanId != null and wenjuanId != ''">#{wenjuanId},</if>
+            <if test="result != null and result != ''">#{result},</if>
+            <if test="score != null and score != ''">#{score},</if>
+            <if test="createTime != null">#{createTime,jdbcType=TIMESTAMP}</if>
+        </trim>
+        )
+    </insert>
+
+    <insert id="batchAdd" parameterType="com.module.pojo.Result" useGeneratedKeys="true" keyProperty="id">
+        insert into result (
+        username, userid, wenjuanid, result, score, createtime )values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (
+            #{item.username}, #{item.userId}, #{item.wenjuanId}, #{item.result},#{item.score},
+            #{item.createTime,jdbcType=TIMESTAMP} )
+        </foreach>
+    </insert>
+
+    <update id="updateWenjuanjieguo" parameterType="com.module.pojo.Result">
+        update result
+        <set>
+            <if test="username != null and username != ''">username = #{username},</if>
+            <if test="userId != null and userId != ''">userid = #{userId},</if>
+            <if test="wenjuanId != null and wenjuanId != ''">wenjuanid = #{wenjuanId},</if>
+            <if test="result != null and result != ''">result = #{result},</if>
+            <if test="score != null and score != ''">score = #{score},</if>
+            <if test="createTime != null">createtime = #{createTime,jdbcType=TIMESTAMP}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        update result
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="status =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="username != null and username != ''">when id=#{item.id} then #{username}</if>
+                    <if test="userId != null and userId != ''">when id=#{item.id} then #{userId}</if>
+                    <if test="wenjuanId != null and wenjuanId != ''">when id=#{item.id} then #{wenjuanId}</if>
+                    <if test="result != null and result != ''">when id=#{item.id} then #{result}</if>
+                    <if test="score != null and score != ''">when id=#{item.id} then #{score}</if>
+                    <if test="createTime != null">when id=#{item.id} then #{createTime,jdbcType=TIMESTAMP}</if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=BIGINT}
+        </foreach>
+    </update>
+
+    <delete id="deleteWenjuanjieguoById" parameterType="Integer">
+        delete from result where id = #{value}
+    </delete>
+
+    <delete id="deleteWenjuanjieguoByUserId" parameterType="Integer">
+        delete from result where userid = #{value}
+    </delete>
+    <delete id="batchDeleteWenjuanjieguo" parameterType="Integer">
+        delete from result where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
