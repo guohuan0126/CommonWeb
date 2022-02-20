@@ -276,7 +276,7 @@ public class FrontController extends BaseController {
         TreeList tree = new TreeList(leaveMessageList);
         List<LeaveMessage> listTree = tree.buildTree();
         System.out.println("liuyanList.size() = " + listTree.size());
-        model.addAttribute("liuyanList", listTree);
+        model.addAttribute("leaveMessageList", listTree);
         return "pc/articleDetail";
     }
 
