@@ -26,13 +26,13 @@
     <%--<h1>管理员登录</h1>--%>
     <form class="layui-form" id="loginForm">
         <div class="layui-form-item">
-            <input class="layui-input" name="username" placeholder="用户名" value="admin" lay-verify="required"
+            <input class="layui-input" name="username" placeholder="用户名" lay-verify="required"
                    type="text"
-                   autocomplete="off">
+                   autocomplete="on">
         </div>
         <div class="layui-form-item" style="margin-top: 30px">
-            <input class="layui-input" name="password" placeholder="密码" value="123456" lay-verify="required"
-                   type="password" autocomplete="off">
+            <input class="layui-input" name="password" placeholder="密码" lay-verify="required"
+                   type="password" autocomplete="on">
         </div>
        <%-- <div class="layui-form-item" style="margin-top: 30px">
             <select name="role" class="layui-select">
