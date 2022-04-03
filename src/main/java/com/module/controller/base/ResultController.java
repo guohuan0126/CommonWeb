@@ -163,7 +163,10 @@ public class ResultController {
     @ResponseBody
     public ResultUtil deleteResultById(Integer id) {
         try {
-            resultMapper.deleteWenjuanjieguoByUserId(id);
+            Result result = resultMapper.selectWenjuanjieguoById(id);
+            if (Objects.nonNull(result)){
+                resultMapper.deleteWenjuanjieguoByUserId(result.getUserId());
+            }
             return ResultUtil.ok("删除问卷结果成功");
         } catch (Exception e) {
             return ResultUtil.error("删除问卷结果出错,稍后再试！");
@@ -183,7 +186,10 @@ public class ResultController {
             if (!StringUtils.isBlank(idsStr)) {
                 String[] ids = idsStr.split(",");
                 for (String id : ids) {
-                    resultMapper.deleteWenjuanjieguoById(Integer.parseInt(id));
+                    Result result = resultMapper.selectWenjuanjieguoById(Integer.parseInt(id));
+                    if (Objects.nonNull(result)){
+                        resultMapper.deleteWenjuanjieguoByUserId(result.getUserId());
+                    }
                 }
             }
             return ResultUtil.ok("批量删除问卷结果成功");
