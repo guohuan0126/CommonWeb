@@ -4,7 +4,8 @@ import java.util.Date;
 
 
 /**
- * 留言表 liuyan
+ * 留言表
+ * @author huhao
  */
 public class LeaveMessage {
     private static final long serialVersionUID = 1L;

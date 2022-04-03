@@ -1,15 +1,21 @@
 package com.module.util;
 
+import com.github.pagehelper.PageInfo;
+import com.module.constants.Constant;
+import com.module.pojo.LinkUrl;
+import org.apache.poi.ss.formula.functions.T;
+
 import java.io.Serializable;
 
 /**
  * json格式返回工具类
+ * @author huhao
  */
 public class ResultUtil implements Serializable {
-    private Integer code;  //返回状态码  0代表成功
-    private String msg = "";  //返回提示信息
+    private Integer code;
+    private String msg = "";
     private Long count = 0L;
-    private Object data;   //返回数据
+    private Object data;
 
     public ResultUtil() {
         super();
@@ -75,6 +81,14 @@ public class ResultUtil implements Serializable {
         ResultUtil result = new ResultUtil();
         result.setCode(0);
         result.setMsg(msg);
+        return result;
+    }
+
+    public static ResultUtil pageOk(PageInfo pageInfo){
+        ResultUtil result = new ResultUtil();
+        result.setCode(Constant.SUCCESS_CODE_INT);
+        result.setCount(pageInfo.getTotal());
+        result.setData(pageInfo.getList());
         return result;
     }
 

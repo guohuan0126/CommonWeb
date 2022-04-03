@@ -7,18 +7,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 数据统计查询请求处理
+ * @author huhao
  */
 @Controller
 public class DataCountController {
-    @Autowired
+    @Resource
     ArticleMapper articleMapper;
-    @Autowired
-    ClassifyMapper classifyMapper;
+
 
     /**
      * 数据统计显示
@@ -28,7 +29,7 @@ public class DataCountController {
      */
     @RequestMapping("manage/countDateShow")
     public String countDateShow(Model model) {
-        List<Map> mapList = articleMapper.countData(null);
+        List<Map<String, Object>> mapList = articleMapper.countData(null);
         model.addAttribute("mapList", mapList);
         return "manage/article/countDateShow";
     }

@@ -6,9 +6,12 @@ import javax.servlet.http.HttpSession;
 
 /**
  * 系统开发中常用常量工具类
+ * @author huhao
  */
 public class ConstantUtil {
-    //后台管理员登陆后存放session的变量名
+    /**
+     * 后台管理员登陆后存放session的变量名
+     */
     public static final String MANAGE_LOGIN_SERSSION = "loginAdmin";
     public static final String MANAGE_LOGIN_SERSSION_ID = "loginAdminID";
 
@@ -30,7 +33,7 @@ public class ConstantUtil {
      * @param session
      * @return
      */
-    public static Long getManageLoginAdminID(HttpSession session) {
+    public static Long getManageLoginAdminId(HttpSession session) {
         return (Long) session.getAttribute(MANAGE_LOGIN_SERSSION_ID);
     }
 }

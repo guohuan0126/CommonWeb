@@ -1,5 +1,7 @@
 package com.module.controller.base;
 
+import com.beust.jcommander.internal.Lists;
+import com.module.constants.RespConstant;
 import com.module.util.ResultUtil;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -14,30 +16,32 @@ import java.util.*;
 
 /**
  * 文件上传请求处理类
+ * @author huhao
  */
 @Controller
 public class FileUploadController {
 
+    private static final List<String> FILE_TYPE = Lists.newArrayList(".jpg", ".jpeg", ".png", ".gif");
+    /**
+     * 文件上传
+     * @param file
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/uploadFile", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
     @ResponseBody
     public ResultUtil uploadFile(MultipartFile file, HttpServletRequest request) {
-        if (file == null) {
-            return ResultUtil.error("文件不能为空！");
+        if (Objects.isNull(file)) {
+            return ResultUtil.error(RespConstant.FILE_NO_EXIST);
         }
         String fileSub = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase();
-        if (".jpg".equals(fileSub) || ".jpeg".equals(fileSub) || ".png".equals(fileSub) || ".gif".equals(fileSub)) {
+        if (FILE_TYPE.contains(fileSub)) {
             Random d = new Random();
             String img = System.currentTimeMillis() + "_" + d.nextInt(10) + "" + fileSub;
             //获取当前项目上传文件路径  中的upload文件中
             //将当前日期格式化为文件夹路径 例如"20190203"
             //获取项目路径 项目名（上下文）
             String basePath = request.getSession().getServletContext().getRealPath("/uploads");
-            System.out.println("basePath = " + basePath);
-            /*
-                使用配置文件配置文件上传路径
-                String dateStr = (new SimpleDateFormat("yyyyMMdd/")).format(new Date());
-                String path = ConfigUtil.getUploadPath() + dateStr;  //读取配置文件中的路径+时间
-            */
             String path = basePath;
             try {
                 File f = new File(path);
@@ -47,7 +51,7 @@ public class FileUploadController {
                 file.transferTo(new File(f, img));
             } catch (Exception e) {
                 e.printStackTrace();
-                return ResultUtil.error("文件上传错误，文件夹不能创建");
+                return ResultUtil.error(RespConstant.FILE_NO_EXIST_1);
             }
             //获取项目路径 例如项目名为test  则值为  /test
             String contextPath = request.getServletContext().getContextPath();
@@ -57,7 +61,7 @@ public class FileUploadController {
 
             return ResultUtil.ok(map);
         } else {
-            return ResultUtil.error("文件格式不支持,请重新选择！");
+            return ResultUtil.error(RespConstant.FILE_TYPE_ERROR);
         }
     }
 
@@ -79,15 +83,15 @@ public class FileUploadController {
      */
     @RequestMapping(value = "/layeditUploadFile", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=utf-8")
     @ResponseBody
-    public Map layeditUploadFile(MultipartFile file, HttpServletRequest request) {
-        Map map = new HashMap();
+    public Map<String, Object> layeditUploadFile(MultipartFile file, HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
         if (file == null) {
             map.put("code", -1);
-            map.put("msg", "文件不能为空！");
+            map.put("msg", RespConstant.FILE_NO_EXIST);
             return map;
         }
         String fileSub = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")).toLowerCase();
-        if (".jpg".equals(fileSub) || ".jpeg".equals(fileSub) || ".png".equals(fileSub) || ".gif".equals(fileSub)) {
+        if (FILE_TYPE.contains(fileSub)) {
             Random d = new Random();
             String img = System.currentTimeMillis() + "_" + d.nextInt(10) + "" + fileSub;
             //获取当前项目上传文件路径  中的upload文件中
@@ -95,11 +99,6 @@ public class FileUploadController {
             //获取项目路径 项目名（上下文）
             String basePath = request.getSession().getServletContext().getRealPath("/uploads");
             System.out.println("basePath = " + basePath);
-            /*
-                使用配置文件配置文件上传路径
-                String dateStr = (new SimpleDateFormat("yyyyMMdd/")).format(new Date());
-                String path = ConfigUtil.getUploadPath() + dateStr;  //读取配置文件中的路径+时间
-            */
             String path = basePath;
             try {
                 File f = new File(path);
@@ -110,7 +109,7 @@ public class FileUploadController {
             } catch (Exception e) {
                 e.printStackTrace();
                 map.put("code", -1);
-                map.put("msg", "文件上传错误，文件夹不能创建！");
+                map.put("msg", RespConstant.FILE_NO_EXIST_1);
                 return map;
             }
             //获取项目路径
@@ -124,7 +123,7 @@ public class FileUploadController {
             return map;
         } else {
             map.put("code", -1);
-            map.put("msg", "文件格式不支持,请重新选择！");
+            map.put("msg", RespConstant.FILE_TYPE_ERROR);
             return map;
         }
     }

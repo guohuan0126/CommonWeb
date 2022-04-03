@@ -12,18 +12,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 页面请求控制  问卷管理
+ * @author huhao
  */
 @Controller
 public class QuestionnaireController {
-    @Autowired
+    @Resource
     QuestionnaireMapper questionnaireMapper;
 
 
@@ -33,7 +32,7 @@ public class QuestionnaireController {
      * @return
      */
     @RequestMapping("manage/questionnaireList")
-    public String wenjuanList() {
+    public String questionnaireList() {
         return "manage/questionnaire/wenjuanList";
     }
 
@@ -43,7 +42,7 @@ public class QuestionnaireController {
      * @return
      */
     @RequestMapping("manage/addWenjuan")
-    public String addWenjuan(Model model) {
+    public String addQuestionnaire(Model model) {
         return "manage/questionnaire/saveWenjuan";
     }
 
@@ -55,7 +54,7 @@ public class QuestionnaireController {
      * @return
      */
     @RequestMapping("manage/editWenjuan")
-    public String editWenjuan(Integer id, Model model) {
+    public String editQuestionnaire(Integer id, Model model) {
         Questionnaire questionnaire = questionnaireMapper.selectWenjuanById(id);
         model.addAttribute("questionnaire", questionnaire);
         return "manage/questionnaire/saveWenjuan";
@@ -69,7 +68,7 @@ public class QuestionnaireController {
      * @return
      */
     @RequestMapping("manage/wenjuanInfo")
-    public String wenjuanInfo(Integer id, Model model) {
+    public String questionnaireInfo(Integer id, Model model) {
         Questionnaire questionnaire = questionnaireMapper.selectWenjuanById(id);
         model.addAttribute("questionnaire", questionnaire);
         return "manage/questionnaire/wenjuanInfo";
@@ -85,24 +84,26 @@ public class QuestionnaireController {
      */
     @RequestMapping("manage/queryWenjuanList")
     @ResponseBody
-    public ResultUtil getCarouseList(Integer page, Integer limit, String keyword) {
-        if (null == page) { //默认第一页
+    public ResultUtil getQuestionnaireList(Integer page, Integer limit, String keyword) {
+        //默认第一页
+        if (Objects.isNull(page)) {
             page = 1;
         }
-        if (null == limit) { //默认每页10条
+        //默认每页10条
+        if (Objects.isNull(limit)) {
             limit = 10;
         }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
         }
         PageHelper.startPage(page, limit, true);
         List<Questionnaire> list = questionnaireMapper.selectAll(map);
-        PageInfo<Questionnaire> pageInfo = new PageInfo<Questionnaire>(list);  //使用mybatis分页插件
+        PageInfo<Questionnaire> pageInfo = new PageInfo<Questionnaire>(list);
         ResultUtil resultUtil = new ResultUtil();
-        resultUtil.setCode(0);  //设置返回状态0为成功
-        resultUtil.setCount(pageInfo.getTotal());  //获取总记录数目 类似count(*)
-        resultUtil.setData(pageInfo.getList());    //获取当前查询出来的集合
+        resultUtil.setCode(0);
+        resultUtil.setCount(pageInfo.getTotal());
+        resultUtil.setData(pageInfo.getList());
         return resultUtil;
     }
 
@@ -111,7 +112,7 @@ public class QuestionnaireController {
      */
     @RequestMapping("manage/saveWenjuan")
     @ResponseBody
-    public ResultUtil saveWenjuan(Questionnaire questionnaire, HttpSession session) {
+    public ResultUtil saveQuestionnaire(Questionnaire questionnaire, HttpSession session) {
         Date nowTime = new Date();
         questionnaire.setCreatetime(nowTime);
         try {
@@ -127,7 +128,7 @@ public class QuestionnaireController {
      */
     @RequestMapping("manage/updateWenjuan")
     @ResponseBody
-    public ResultUtil updateWenjuan(Questionnaire questionnaire, HttpSession session) {
+    public ResultUtil updateQuestionnaire(Questionnaire questionnaire, HttpSession session) {
         Date nowTime = new Date();
         questionnaire.setCreatetime(nowTime);
         try {
@@ -147,7 +148,7 @@ public class QuestionnaireController {
      */
     @RequestMapping("manage/deleteWenjuan")
     @ResponseBody
-    public ResultUtil deleteWenjuanById(Integer id) {
+    public ResultUtil deleteQuestionnaireById(Integer id) {
         try {
             questionnaireMapper.deleteWenjuanById(id);
             return ResultUtil.ok("删除问卷成功");
@@ -164,7 +165,7 @@ public class QuestionnaireController {
      */
     @RequestMapping("manage/deletesWenjuan")
     @ResponseBody
-    public ResultUtil deletesWenjuan(String idsStr) {
+    public ResultUtil deletesQuestionnaire(String idsStr) {
         try {
             if (!StringUtils.isBlank(idsStr)) {
                 String[] ids = idsStr.split(",");

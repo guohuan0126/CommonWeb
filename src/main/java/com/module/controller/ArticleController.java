@@ -19,21 +19,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
  * 页面请求控制  帖子管理
+ * @author huhao
  */
 @Controller
 public class ArticleController {
-    @Autowired
+    @Resource
     ArticleMapper articleMapper;
-    @Autowired
+    @Resource
     ClassifyMapper classifyMapper;
-    @Autowired
+    @Resource
     UserInfoMapper userinfoMapper;
-    @Autowired
+    @Resource
     LinkUrlMapper linkurlMapper;
 
 
@@ -101,25 +103,21 @@ public class ArticleController {
     @RequestMapping("manage/queryArticleList")
     @ResponseBody
     public ResultUtil getCarouseList(Integer page, Integer limit, String keyword) {
-        if (null == page) { //默认第一页
+        if (Objects.isNull(page)) {
             page = 1;
         }
-        if (null == limit) { //默认每页10条
+        if (Objects.isNull(limit)) {
             limit = 10;
         }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
         }
         Page pageHelper = PageHelper.startPage(page, limit, true);
         pageHelper.setOrderBy(" id desc ");
         List<Article> list = articleMapper.selectAll(map);
-        PageInfo<Article> pageInfo = new PageInfo<Article>(list);  //使用mybatis分页插件
-        ResultUtil resultUtil = new ResultUtil();
-        resultUtil.setCode(0);  //设置返回状态0为成功
-        resultUtil.setCount(pageInfo.getTotal());  //获取总记录数目 类似count(*)
-        resultUtil.setData(pageInfo.getList());    //获取当前查询出来的集合
-        return resultUtil;
+        PageInfo<Article> pageInfo = new PageInfo<Article>(list);
+        return ResultUtil.pageOk(pageInfo);
     }
 
     /**
@@ -232,18 +230,18 @@ public class ArticleController {
      * @param session
      * @return
      */
-    public int getLoginUserInfoID(HttpSession session) {
-        int userID = (int) session.getAttribute("loginUserinfoID");
-        return userID;
+    public int getLoginUserInfoId(HttpSession session) {
+        int userId = (int) session.getAttribute("loginUserinfoID");
+        return userId;
     }
 
     public UserInfo getLoginUserInfo(HttpSession session) {
-        Object loginUserinfoID = session.getAttribute("loginUserinfoID");
-        if (Objects.isNull(loginUserinfoID)){
+        Object loginUserinfoId = session.getAttribute("loginUserinfoID");
+        if (Objects.isNull(loginUserinfoId)){
             return null;
         }
-        int userID = (int) loginUserinfoID;
-        return userinfoMapper.selectUserinfoById(userID);
+        int userId = (int) loginUserinfoId;
+        return userinfoMapper.selectUserinfoById(userId);
     }
 
     public void setLinkurlContent(HttpSession session) {
@@ -255,13 +253,13 @@ public class ArticleController {
      * 分页参数方法封装
      *
      * @param model
-     * @param pathURL  分页地址
+     * @param pathUrl  分页地址
      * @param pageInfo 分页查询信息
      */
-    public static void setPageParams(Model model, String pathURL, Page<Object> pageInfo) {
+    public static void setPageParams(Model model, String pathUrl, Page<Object> pageInfo) {
         model.addAttribute("currentPage", pageInfo.getPageNum()); //绑定当前页参数
         model.addAttribute("totalPage", pageInfo.getPages()); //绑定总页数
         model.addAttribute("totalNums", pageInfo.getTotal()); //绑定总记录条数
-        model.addAttribute("pathURL", pathURL); //绑定分页跳转地址
+        model.addAttribute("pathURL", pathUrl); //绑定分页跳转地址
     }
 }

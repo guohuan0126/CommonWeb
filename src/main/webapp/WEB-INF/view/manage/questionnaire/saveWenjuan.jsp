@@ -71,6 +71,14 @@
         </div>
     </div>
     <div class="layui-form-item ">
+        <label class="layui-form-label">答案</label>
+        <div class="layui-input-block">
+            <input type="text" id="daan" name="daan" lay-verify="required"
+                   placeholder="请输入答案"
+                   lay-verify="required" value="${questionnaire.daan}" class="layui-input"/>
+        </div>
+    </div>
+    <div class="layui-form-item ">
         <label class="layui-form-label">所属id</label>
         <div class="layui-input-block">
             <input type="text" id="tId" name="tId" lay-verify="required" value="0"

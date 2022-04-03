@@ -13,18 +13,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 页面请求控制  留言管理
+ * @author huhao
  */
 @Controller
 public class LeaveMessageController {
-    @Autowired
+    @Resource
     LeaveMessageMapper leaveMessageMapper;
 
 
@@ -87,25 +86,21 @@ public class LeaveMessageController {
     @RequestMapping("manage/queryLiuyanList")
     @ResponseBody
     public ResultUtil getCarouseList(Integer page, Integer limit, String keyword) {
-        if (null == page) { //默认第一页
+        if (Objects.isNull(page)) {
             page = 1;
         }
-        if (null == limit) { //默认每页10条
+        if (Objects.isNull(limit)) {
             limit = 10;
         }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
         }
         Page pageHelper = PageHelper.startPage(page, limit, true);
         pageHelper.setOrderBy(" id desc ");
         List<LeaveMessage> list = leaveMessageMapper.selectAll(map);
-        PageInfo<LeaveMessage> pageInfo = new PageInfo<LeaveMessage>(list);  //使用mybatis分页插件
-        ResultUtil resultUtil = new ResultUtil();
-        resultUtil.setCode(0);  //设置返回状态0为成功
-        resultUtil.setCount(pageInfo.getTotal());  //获取总记录数目 类似count(*)
-        resultUtil.setData(pageInfo.getList());    //获取当前查询出来的集合
-        return resultUtil;
+        PageInfo<LeaveMessage> pageInfo = new PageInfo<LeaveMessage>(list);
+        return ResultUtil.pageOk(pageInfo);
     }
 
     /**

@@ -12,18 +12,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 页面请求控制  公告管理
+ * @author huhao
  */
 @Controller
 public class InformController {
-    @Autowired
+    @Resource
     InformMapper informMapper;
 
     /**
@@ -70,23 +69,28 @@ public class InformController {
     @RequestMapping("manage/queryInformList")
     @ResponseBody
     public ResultUtil getCarouseList(Integer page, Integer limit, String keyword) {
-        if (null == page) { //默认第一页
+        //默认第一页
+        if (Objects.isNull(page)) {
             page = 1;
         }
-        if (null == limit) { //默认每页10条
+        //默认每页10条
+        if (Objects.isNull(limit)) {
             limit = 10;
         }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
         }
         PageHelper.startPage(page, limit, true);
         List<Inform> list = informMapper.selectAll(map);
-        PageInfo<Inform> pageInfo = new PageInfo<Inform>(list);  //使用mybatis分页插件
+        //使用mybatis分页插件
+        PageInfo<Inform> pageInfo = new PageInfo<Inform>(list);
         ResultUtil resultUtil = new ResultUtil();
-        resultUtil.setCode(0);  //设置返回状态0为成功
-        resultUtil.setCount(pageInfo.getTotal());  //获取总记录数目 类似count(*)
-        resultUtil.setData(pageInfo.getList());    //获取当前查询出来的集合
+        resultUtil.setCode(0);
+        //获取总记录数目 类似count(*)
+        resultUtil.setCount(pageInfo.getTotal());
+        //获取当前查询出来的集合
+        resultUtil.setData(pageInfo.getList());
         return resultUtil;
     }
 

@@ -18,7 +18,7 @@ public interface ArticleMapper {
      * @param map
      * @return
      */
-    List<Map> countData(Map map);
+    List<Map<String, Object>> countData(Map<String, Object> map);
 
     /**
      * 查询帖子信息

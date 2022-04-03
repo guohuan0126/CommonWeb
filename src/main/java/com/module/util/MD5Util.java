@@ -1,19 +1,25 @@
 package com.module.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
  * 功能简介：MD5加密工具类
  * 密码等安全信息存入数据库时，转换成MD5加密形式
+ * @author huhao
  */
 public class MD5Util {
-    public static String salt = ""; //加盐密码
+    /**
+     * 加盐密码
+     */
+    public static final String SALT = "";
 
     public static String getMd5(String pwd) {
-        pwd = salt + pwd;
+        pwd = SALT + pwd;
         String outStr = null;
-        if (pwd == null) {
+        if (StringUtils.isBlank(pwd)) {
             outStr = null;
         } else if ("".equals(pwd)) {
             outStr = "";
@@ -21,8 +27,8 @@ public class MD5Util {
             try {
                 MessageDigest md = MessageDigest.getInstance("MD5");
                 md.update(pwd.getBytes());
-                byte b[] = md.digest();
-                StringBuffer buf = new StringBuffer();
+                byte[] b = md.digest();
+                StringBuilder buf = new StringBuilder();
                 for (int i = 1; i < b.length; i++) {
                     int c = b[i] >>> 4 & 0xf;
                     buf.append(Integer.toHexString(c));

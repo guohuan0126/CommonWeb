@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -19,14 +20,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author huhao
  * 后台管理类：登陆 首页跳转等
  */
 @Controller
 public class ManageController {
-    @Autowired
+    @Resource
     AdminMapper adminMapper;
 
-    //默认进入系统后台首页
+    /**
+     * 默认进入系统后台首页
+     * @return
+     */
     @RequestMapping("/manage")
     public String manage() {
         return "manage/login";
@@ -47,28 +52,47 @@ public class ManageController {
         return "manage/indexstu";
     }
 
-    //后台主页
+    /**
+     * 后台主页
+     * @return
+     */
     @RequestMapping("manage/main")
     public String main() {
         return "manage/main";
     }
 
 
-    //访问login
+    /**
+     * 访问login
+     * @return
+     */
     @RequestMapping("manage/login")
     public String login() {
         return "manage/login";
     }
 
 
-    //退出登录
+    /**
+     * 退出登录
+     * @param session
+     * @return
+     */
     @RequestMapping("manage/loginOut")
     public String loginOut(HttpSession session) {
-        session.removeAttribute("admin"); //清楚session中登录的对象
+        //清楚session中登录的对象
+        session.removeAttribute("admin");
         return "manage/login";
     }
 
-    //登陆提交
+    /**
+     * 提交登陆信息
+     * @param request
+     * @param role
+     * @param username
+     * @param password
+     * @param vcode
+     * @return
+     */
     @RequestMapping("manage/loginSubmit")
     @ResponseBody
     public ResultUtil loginSubmit(HttpServletRequest request, String role, String username, String password, String vcode) {
@@ -88,8 +112,7 @@ public class ManageController {
         if (!sessionVcode.equalsIgnoreCase(vcode)) {
             return ResultUtil.error("验证码不正确");
         }
-        Map map = new HashMap();
-        System.out.println("username = " + username);
+        Map<String, String> map = new HashMap<>();
         if (StringUtils.isNotEmpty(username)) {
             map.put("adminname", username);
         }
@@ -100,12 +123,12 @@ public class ManageController {
             return new ResultUtil(1, "用户名或密码错误！");
         }
         Admin admin = adminList.get(0);
-        System.out.println("admin = " + admin);
         if (admin != null) {
-            //判断密码是否相等
-            password = MD5Util.getMd5(password); //加密密码  然后在进行比对
-            System.out.println("数据库存储密码 = " + admin.getAdminpassword());
-            System.out.println("登录密码加密 = " + password);
+            /**
+             * 判断密码是否相等
+             * 加密密码  然后在进行比对
+             */
+            password = MD5Util.getMd5(password);
             if (admin.getAdminpassword().equals(password)) {
                 // 登陆成功
                 // 将密码置空

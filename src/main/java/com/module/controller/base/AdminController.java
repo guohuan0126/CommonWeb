@@ -19,6 +19,7 @@ import java.util.*;
 
 /**
  * 页面请求控制  管理员管理
+ * @author huhao
  */
 @Controller
 public class AdminController {

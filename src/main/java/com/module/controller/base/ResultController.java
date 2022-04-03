@@ -1,5 +1,6 @@
 package com.module.controller.base;
 
+import com.module.constants.Constant;
 import com.module.mapper.UserInfoMapper;
 import com.module.mapper.QuestionnaireMapper;
 import com.module.mapper.ResultMapper;
@@ -14,22 +15,23 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
  * 页面请求控制  问卷结果管理
+ * @author huhao
  */
 @Controller
 public class ResultController {
-    @Autowired
+    @Resource
     ResultMapper resultMapper;
-    @Autowired
-    QuestionnaireMapper questionnaireMapper;
-    @Autowired
+    @Resource
     UserInfoMapper userinfoMapper;
 
 
@@ -39,7 +41,7 @@ public class ResultController {
      * @return
      */
     @RequestMapping("manage/wenjuanjieguoList")
-    public String wenjuanjieguoList() {
+    public String resultList() {
         return "manage/result/wenjuanjieguoList";
     }
 
@@ -49,7 +51,7 @@ public class ResultController {
      * @return
      */
     @RequestMapping("manage/addWenjuanjieguo")
-    public String addWenjuanjieguo(Model model) {
+    public String addResult(Model model) {
         return "manage/result/saveWenjuanjieguo";
     }
 
@@ -61,7 +63,7 @@ public class ResultController {
      * @return
      */
     @RequestMapping("manage/editWenjuanjieguo")
-    public String editWenjuanjieguo(Integer id, Model model) {
+    public String editResult(Integer id, Model model) {
         Result result = resultMapper.selectWenjuanjieguoById(id);
         model.addAttribute("result", result);
         return "manage/result/saveWenjuanjieguo";
@@ -75,7 +77,7 @@ public class ResultController {
      * @return
      */
     @RequestMapping("manage/wenjuanjieguoInfo")
-    public String wenjuanjieguoInfo(Integer id, Model model) {
+    public String resultInfo(Integer id, Model model) {
         List<ResultInfo> resultInfoList = resultMapper.selectWenjuanjieguoInfoByUserId(id);
         UserInfo userinfo = userinfoMapper.selectUserinfoById(id);
         model.addAttribute("resultInfoList", resultInfoList);
@@ -93,22 +95,22 @@ public class ResultController {
      */
     @RequestMapping("manage/queryWenjuanjieguoList")
     @ResponseBody
-    public ResultUtil getCarouseList(Integer page, Integer limit, String keyword) {
-        if (null == page) { //默认第一页
+    public ResultUtil getResultList(Integer page, Integer limit, String keyword) {
+        if (Objects.isNull(page)) {
             page = 1;
         }
-        if (null == limit) { //默认每页10条
+        if (Objects.isNull(limit)) {
             limit = 10;
         }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
         }
         PageHelper.startPage(page, limit, true);
         List<ResultVo> list = resultMapper.selectAllWenJuan(map);
         ResultUtil resultUtil = new ResultUtil();
-        resultUtil.setCode(0);
-        if (list!=null||list.size()>0){
+        resultUtil.setCode(Constant.SUCCESS_CODE_INT);
+        if (!CollectionUtils.isEmpty(list)){
             PageInfo<ResultVo> pageInfo = new PageInfo<>(list);
             resultUtil.setCount(pageInfo.getTotal());
             resultUtil.setData(pageInfo.getList());
@@ -123,7 +125,7 @@ public class ResultController {
      */
     @RequestMapping("manage/saveWenjuanjieguo")
     @ResponseBody
-    public ResultUtil saveWenjuanjieguo(Result result, HttpSession session) {
+    public ResultUtil saveResult(Result result, HttpSession session) {
         Date nowTime = new Date();
         result.setCreateTime(nowTime);
         try {
@@ -139,7 +141,7 @@ public class ResultController {
      */
     @RequestMapping("manage/updateWenjuanjieguo")
     @ResponseBody
-    public ResultUtil updateWenjuanjieguo(Result result, HttpSession session) {
+    public ResultUtil updateResult(Result result, HttpSession session) {
         Date nowTime = new Date();
         result.setCreateTime(nowTime);
         try {
@@ -159,7 +161,7 @@ public class ResultController {
      */
     @RequestMapping("manage/deleteWenjuanjieguo")
     @ResponseBody
-    public ResultUtil deleteWenjuanjieguoById(Integer id) {
+    public ResultUtil deleteResultById(Integer id) {
         try {
             resultMapper.deleteWenjuanjieguoByUserId(id);
             return ResultUtil.ok("删除问卷结果成功");
@@ -176,7 +178,7 @@ public class ResultController {
      */
     @RequestMapping("manage/deletesWenjuanjieguo")
     @ResponseBody
-    public ResultUtil deletesWenjuanjieguo(String idsStr) {
+    public ResultUtil deletesResult(String idsStr) {
         try {
             if (!StringUtils.isBlank(idsStr)) {
                 String[] ids = idsStr.split(",");

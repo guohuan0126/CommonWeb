@@ -51,7 +51,7 @@ public class FrontController extends BaseController {
      */
     @RequestMapping("pc/leaveMessage")
     public String leaveMessage(Model model) {
-        Page<Object> pageInfo = PageHelper.startPage(1, 100, true);
+        Page<LeaveMessage> pageInfo = PageHelper.startPage(1, 100, true);
         pageInfo.setOrderBy(" id desc ");
         List<LeaveMessage> leaveMessageList = leaveMessageMapper.selectAll(null);
         TreeList tree = new TreeList(leaveMessageList);
@@ -90,6 +90,9 @@ public class FrontController extends BaseController {
             Integer integer = resultMapper.selectWenjuanjieguoByUserId(loginUserInfo.getId());
             if (null==integer||integer==0){
                 List<Questionnaire> questionnaireList = questionnaireMapper.selectAll(null);
+                for (Questionnaire questionnaire : questionnaireList) {
+                    questionnaire.setDaan("");
+                }
                 model.addAttribute("questionnaireList", questionnaireList);
             } else {
                 model.addAttribute("score", integer);
@@ -126,13 +129,10 @@ public class FrontController extends BaseController {
     @RequestMapping("pc/articleList")
     public String indexType(Model model, Integer p, Integer limit, String keyword, String name, String orderStr, String type, HttpSession session) {
         limit = 6;
-        if (null == p) { //默认第一页
+        if (null == p) {
             p = 1;
         }
-        if (null == limit) { //默认每页10条
-            limit = 9;
-        }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(type)) {
             map.put("type", type);
             model.addAttribute("type", type);
@@ -146,7 +146,7 @@ public class FrontController extends BaseController {
         pageInfo.setOrderBy(" id desc ");
         List<Article> beanDataList = articleMapper.selectAll(map);
         model.addAttribute("beanDataList", beanDataList);
-        setPageParams(model, "pc/articleList", pageInfo); //绑定分页参数
+        setPageParams(model, "pc/articleList", pageInfo);
         return "pc/articleList";
     }
 
@@ -160,13 +160,10 @@ public class FrontController extends BaseController {
     public String index(Model model, Integer p, Integer limit, String keyword, String title, String author, String orderStr, String type, HttpSession session) {
 
         limit = 6;
-        if (null == p) { //默认第一页
+        if (Objects.isNull(p)) {
             p = 1;
         }
-        if (null == limit) { //默认每页10条
-            limit = 9;
-        }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
             model.addAttribute("keyword", keyword);
@@ -282,8 +279,7 @@ public class FrontController extends BaseController {
 
     @RequestMapping("pc/submitWenjuan")
     public String submitWenjuan(Integer id, String username, Model model, HttpServletRequest request) {
-        int loginUserInfoID = getLoginUserInfoID(request.getSession());
-
+        int loginUserInfoId = getLoginUserInfoId(request.getSession());
         Map<String, String[]> parameterMap = request.getParameterMap();
         List<Questionnaire> list = questionnaireMapper.selectAll(null);
         for (Questionnaire questionnaire : list) {
@@ -291,7 +287,7 @@ public class FrontController extends BaseController {
             String[] strings = parameterMap.get("xx" + questionnaire.getId());
             if (strings!=null&&strings.length>0){
                 String a = strings[0];
-                j.setUserId(loginUserInfoID);
+                j.setUserId(loginUserInfoId);
                 j.setUsername(username);
                 j.setWenjuanId(questionnaire.getId());
                 j.setResult(a);
@@ -446,8 +442,8 @@ public class FrontController extends BaseController {
      */
     @RequestMapping("pc/userinfoCenter")
     public String userinfoCenter(Model model, HttpSession session) {
-        int userInfoID = getLoginUserInfoID(session);
-        UserInfo userinfo = userinfoMapper.selectUserinfoById(userInfoID);
+        int userInfoId = getLoginUserInfoId(session);
+        UserInfo userinfo = userinfoMapper.selectUserinfoById(userInfoId);
         model.addAttribute("userinfo", userinfo);
         return "pc/userinfoCenter";
     }
@@ -476,17 +472,17 @@ public class FrontController extends BaseController {
      * @param session
      * @return
      */
-    public int getLoginUserInfoID(HttpSession session) {
-        int userID = (int) session.getAttribute("loginUserinfoID");
-        return userID;
+    public int getLoginUserInfoId(HttpSession session) {
+        int userId = (int) session.getAttribute("loginUserinfoID");
+        return userId;
     }
 
     public UserInfo getLoginUserInfo(HttpSession session) {
-        Object loginUserinfoID = session.getAttribute("loginUserinfoID");
-        if (Objects.isNull(loginUserinfoID)){
+        Object loginUserinfo = session.getAttribute("loginUserinfoID");
+        if (Objects.isNull(loginUserinfo)){
             return null;
         }
-        int userID = (int) loginUserinfoID;
-        return userinfoMapper.selectUserinfoById(userID);
+        int userId = (int) loginUserinfo;
+        return userinfoMapper.selectUserinfoById(userId);
     }
 }

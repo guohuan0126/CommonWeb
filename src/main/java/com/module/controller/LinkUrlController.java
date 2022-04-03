@@ -13,19 +13,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 页面请求控制  友情链接管理
+ * @author huhao
  */
 @Controller
-public class LinkurlController {
-    @Autowired
-    LinkUrlMapper linkurlMapper;
+public class LinkUrlController {
+    @Resource
+    LinkUrlMapper linkUrlMapper;
 
 
     /**
@@ -57,7 +56,7 @@ public class LinkurlController {
      */
     @RequestMapping("manage/editLinkurl")
     public String editLinkurl(Integer id, Model model) {
-        LinkUrl linkurl = linkurlMapper.selectLinkurlById(id);
+        LinkUrl linkurl = linkUrlMapper.selectLinkurlById(id);
         model.addAttribute("linkurl", linkurl);
         return "manage/linkurl/saveLinkurl";
     }
@@ -71,7 +70,7 @@ public class LinkurlController {
      */
     @RequestMapping("manage/linkurlInfo")
     public String linkurlInfo(Integer id, Model model) {
-        LinkUrl linkurl = linkurlMapper.selectLinkurlById(id);
+        LinkUrl linkurl = linkUrlMapper.selectLinkurlById(id);
         model.addAttribute("linkurl", linkurl);
         return "manage/linkurl/linkurlInfo";
     }
@@ -87,25 +86,21 @@ public class LinkurlController {
     @RequestMapping("manage/queryLinkurlList")
     @ResponseBody
     public ResultUtil getCarouseList(Integer page, Integer limit, String keyword) {
-        if (null == page) { //默认第一页
+        if (Objects.isNull(page)) {
             page = 1;
         }
-        if (null == limit) { //默认每页10条
+        if (Objects.isNull(limit)) {
             limit = 10;
         }
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<>();
         if (StringUtils.isNotEmpty(keyword)) {
             map.put("keyword", keyword);
         }
         Page pageHelper = PageHelper.startPage(page, limit, true);
         pageHelper.setOrderBy(" id desc ");
-        List<LinkUrl> list = linkurlMapper.selectAll(map);
-        PageInfo<LinkUrl> pageInfo = new PageInfo<LinkUrl>(list);  //使用mybatis分页插件
-        ResultUtil resultUtil = new ResultUtil();
-        resultUtil.setCode(0);  //设置返回状态0为成功
-        resultUtil.setCount(pageInfo.getTotal());  //获取总记录数目 类似count(*)
-        resultUtil.setData(pageInfo.getList());    //获取当前查询出来的集合
-        return resultUtil;
+        List<LinkUrl> list = linkUrlMapper.selectAll(map);
+        PageInfo<LinkUrl> pageInfo = new PageInfo<LinkUrl>(list);
+        return ResultUtil.pageOk(pageInfo);
     }
 
     /**
@@ -117,7 +112,7 @@ public class LinkurlController {
         Date nowTime = new Date();
         linkurl.setCreatetime(nowTime);
         try {
-            linkurlMapper.insertLinkurl(linkurl);
+            linkUrlMapper.insertLinkurl(linkurl);
             return ResultUtil.ok("添加友情链接成功");
         } catch (Exception e) {
             return ResultUtil.error("添加友情链接出错,稍后再试！");
@@ -133,7 +128,7 @@ public class LinkurlController {
         Date nowTime = new Date();
         linkurl.setCreatetime(nowTime);
         try {
-            linkurlMapper.updateLinkurl(linkurl);
+            linkUrlMapper.updateLinkurl(linkurl);
             return ResultUtil.ok("修改友情链接成功");
         } catch (Exception e) {
             return ResultUtil.error("修改友情链接出错,稍后再试！");
@@ -151,7 +146,7 @@ public class LinkurlController {
     @ResponseBody
     public ResultUtil deleteLinkurlById(Integer id) {
         try {
-            linkurlMapper.deleteLinkurlById(id);
+            linkUrlMapper.deleteLinkurlById(id);
             return ResultUtil.ok("删除友情链接成功");
         } catch (Exception e) {
             return ResultUtil.error("删除友情链接出错,稍后再试！");
@@ -171,7 +166,7 @@ public class LinkurlController {
             if (!StringUtils.isBlank(idsStr)) {
                 String[] ids = idsStr.split(",");
                 for (String id : ids) {
-                    linkurlMapper.deleteLinkurlById(Integer.parseInt(id));
+                    linkUrlMapper.deleteLinkurlById(Integer.parseInt(id));
                 }
             }
             return ResultUtil.ok("批量删除友情链接成功");
