@@ -126,6 +126,18 @@ public class FrontController extends BaseController {
         return "pc/index";
     }
 
+    /**
+     * 帖子列表
+     * @param model
+     * @param p
+     * @param limit
+     * @param keyword
+     * @param name
+     * @param orderStr
+     * @param type
+     * @param session
+     * @return
+     */
     @RequestMapping("pc/articleList")
     public String indexType(Model model, Integer p, Integer limit, String keyword, String name, String orderStr, String type, HttpSession session) {
         limit = 6;
@@ -151,7 +163,7 @@ public class FrontController extends BaseController {
     }
 
     /**
-     * 系统首页
+     * PC前端首页
      *
      * @param model
      * @return
@@ -195,6 +207,20 @@ public class FrontController extends BaseController {
         return "pc/index";
     }
 
+    /**
+     * 文章查询
+     * @param model
+     * @param p
+     * @param g
+     * @param limit
+     * @param keyword
+     * @param title
+     * @param author
+     * @param orderStr
+     * @param type
+     * @param session
+     * @return
+     */
     @RequestMapping("pc/articleIndex")
     public String articleIndex(Model model, Integer p, Integer g,Integer limit, String keyword, String title,
                                String author,
@@ -277,6 +303,14 @@ public class FrontController extends BaseController {
         return "pc/articleDetail";
     }
 
+    /**
+     * 提交问券调查
+     * @param id
+     * @param username
+     * @param model
+     * @param request
+     * @return
+     */
     @RequestMapping("pc/submitWenjuan")
     public String submitWenjuan(Integer id, String username, Model model, HttpServletRequest request) {
         int loginUserInfoId = getLoginUserInfoId(request.getSession());
@@ -303,7 +337,14 @@ public class FrontController extends BaseController {
         return "pc/submitSuccess";
     }
 
-
+    /**
+     *校园公告列表
+     * @param model
+     * @param p
+     * @param limit
+     * @param keyword
+     * @return
+     */
     @RequestMapping("pc/informIndex")
     public String informIndex(Model model, Integer p, Integer limit, String keyword) {
         limit = 10;
@@ -411,6 +452,13 @@ public class FrontController extends BaseController {
         return "pc/register";
     }
 
+    /**
+     * 用户注册
+     * @param request
+     * @param userinfo
+     * @param vercode
+     * @return
+     */
     @ResponseBody
     @RequestMapping("pc/registerSubmit")
     public ResultUtil regSubmit(HttpServletRequest request, UserInfo userinfo, String vercode) {

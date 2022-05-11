@@ -32,7 +32,7 @@ layui.config({
     table.on('tool(test)', function (obj) {
         var data = obj.data;
         if (obj.event === 'del') {
-            layer.confirm('真的删除行么?', function (index) {
+            layer.confirm('确认删除么?', function (index) {
                 $.ajax({
                     url: ctx + '/manage/deleteWenjuanjieguo?id=' + data.id,
                     type: "get",
