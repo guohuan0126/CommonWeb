@@ -84,7 +84,7 @@
                 <div class="layui-form-item">
                     <label class="layadmin-user-login-icon layui-icon layui-icon-password"
                            for="LAY-user-login-password"></label>
-                    <input type="password" name="password" id="LAY-user-login-password" lay-verify="pass"
+                    <input type="password" name="password" id="LAY-user-login-password" lay-verify="checkPassword"
                            placeholder="密码"
                            class="layui-input">
                 </div>
@@ -132,6 +132,30 @@
 </div>
 
 <script>
+    layui.use(['form', 'layer','jquery'],function() {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            nikename: function(value) {
+                if (value.length < 2) {
+                    return '姓名至少得2个字符啊';
+                }
+            },
+            checkPassword: function(value) {
+                var passwordReg = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$","ig");
+//			2.3 获取到password元素节点的value属性值
+//			2.4 判断value属性值是否匹配正则并进行相关处理
+                if (value.length<6||value.length>16){
+                    return "密码必须为6-16位数字与字母组合";
+                }
+                if (!passwordReg.test(value)) {
+                    return "密码必须为6-16位数字与字母组合";
+                }
+            }
+        });
+    });
     layui.config({
         base: '' //静态资源所在路径
     }).extend({}).use(['form'], function () {
@@ -162,6 +186,7 @@
             }, "JSON");
         });
     });
+
 </script>
 </body>
 </html>
