@@ -128,7 +128,7 @@ public class ManageController {
              * 判断密码是否相等
              * 加密密码  然后在进行比对
              */
-            password = MD5Util.getMd5(password);
+            password = MD5Util.getMd5(MD5Util.getMd5(password));
             if (admin.getAdminpassword().equals(password)) {
                 // 登陆成功
                 // 将密码置空
@@ -180,9 +180,9 @@ public class ManageController {
         Admin admin = adminMapper.selectAdminById(adminId);
         System.out.println("admin.getPassword() = " + admin.getAdminpassword());
         System.out.println("oldPwd = " + oldPwd);
-        oldPwd = MD5Util.getMd5(oldPwd);
+        oldPwd = MD5Util.getMd5(MD5Util.getMd5(oldPwd));
         if (admin.getAdminpassword().equals(oldPwd)) {
-            newPwd = MD5Util.getMd5(newPwd);
+            newPwd = MD5Util.getMd5(MD5Util.getMd5(newPwd));
             admin.setAdminpassword(newPwd);
             adminMapper.updateAdmin(admin);
             return ResultUtil.ok();

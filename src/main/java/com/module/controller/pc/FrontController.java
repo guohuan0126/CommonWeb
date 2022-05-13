@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.module.controller.base.BaseController;
 import com.module.mapper.*;
 import com.module.pojo.*;
+import com.module.util.MD5Util;
 import com.module.util.ResultUtil;
 import com.module.util.TreeList;
 import org.apache.commons.lang.StringUtils;
@@ -434,7 +435,8 @@ public class FrontController extends BaseController {
         List<UserInfo> beanList = userinfoMapper.selectAll(map);
         if (beanList.size() > 0) {
             UserInfo userinfo = beanList.get(0);
-            if (userinfo.getPassword().equals(password)) {
+            String md5 = MD5Util.getMd5(MD5Util.getMd5(password));
+            if (userinfo.getPassword().equals(md5)) {
                 session.setAttribute("loginUserinfo", userinfo);
                 session.setAttribute("loginUserinfoID", userinfo.getId());
                 return ResultUtil.ok("登录成功");
@@ -477,6 +479,9 @@ public class FrontController extends BaseController {
             return ResultUtil.error("登录密码不能为空");
         }
         userinfo.setCreatetime(new Date());
+        String password = userinfo.getPassword();
+        String md5 = MD5Util.getMd5(MD5Util.getMd5(password));
+        userinfo.setPassword(md5);
         userinfoMapper.insertUserinfo(userinfo);
         return ResultUtil.ok("注册成功");
     }

@@ -100,7 +100,7 @@ public class AdminController {
     public ResultUtil saveAdmin(Admin admin, HttpSession session) {
         Date nowTime = new Date();
         admin.setCreatetime(nowTime);
-        admin.setAdminpassword(MD5Util.getMd5(admin.getAdminpassword())); //加密密码
+        admin.setAdminpassword(MD5Util.getMd5(MD5Util.getMd5(admin.getAdminpassword()))); //加密密码
         try {
             adminMapper.insertAdmin(admin);
             return ResultUtil.ok("添加管理员成功，点击回到列表页");
