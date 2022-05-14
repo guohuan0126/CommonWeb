@@ -85,7 +85,7 @@
                     <label class="layadmin-user-login-icon layui-icon layui-icon-password"
                            for="LAY-user-login-password"></label>
                     <input type="password" name="password" id="LAY-user-login-password" lay-verify="checkPassword"
-                           placeholder="密码"
+                           placeholder="密码必须为6-16位数字与字母组合"
                            class="layui-input">
                 </div>
                 <%-- <div class="layui-form-item">

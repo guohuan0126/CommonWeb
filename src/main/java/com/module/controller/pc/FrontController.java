@@ -507,8 +507,19 @@ public class FrontController extends BaseController {
     @RequestMapping("pc/updateUserinfo")
     @ResponseBody
     public ResultUtil updateUserinfo(UserInfo userinfo, HttpSession session) {
+        UserInfo userInfo = userinfoMapper.selectUserinfoById(userinfo.getId());
         Date nowTime = new Date();
         userinfo.setCreatetime(nowTime);
+        if(StringUtils.isNotBlank(userinfo.getPassword())){
+            String oldPassword = userinfo.getOldPassword();
+            String md5 = MD5Util.getMd5(MD5Util.getMd5(oldPassword));
+            String password = userInfo.getPassword();
+            if (!Objects.equals(md5, password)){
+                return ResultUtil.error("修改用户信息出错,原始密码错误，无法修改！");
+            }
+            String newMd5 = MD5Util.getMd5(MD5Util.getMd5(userinfo.getPassword()));
+            userinfo.setPassword(newMd5);
+        }
         try {
             userinfoMapper.updateUserinfo(userinfo);
             userinfo = getLoginUserInfo(session);

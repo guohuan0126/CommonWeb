@@ -86,11 +86,19 @@
                     </div>
                 </div>
                 <div class="layui-form-item ">
-                    <label class="layui-form-label">密码</label>
+                    <label class="layui-form-label">原始密码</label>
                     <div class="layui-input-block">
-                        <input type="text" id="password" name="password" lay-verify="required"
-                               placeholder="请输入密码"
-                               value="${userinfo.password}" class="layui-input"/>
+                        <input type="password" id="oldPassword" name="oldPassword"
+                               placeholder="如需修改密码，请新输入原始密码"
+                               value="" class="layui-input"/>
+                    </div>
+                </div>
+                <div class="layui-form-item ">
+                    <label class="layui-form-label">新密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" id="password" name="password" lay-verify="checkPassword"
+                               placeholder="如需修改密码，请新输入密码"
+                               value="" class="layui-input"/>
                     </div>
                 </div>
 
@@ -118,6 +126,32 @@
 <jsp:include page="foot.jsp"/>
 
 <script>
+    layui.use(['form', 'layer','jquery'],function() {
+        $ = layui.jquery;
+        var form = layui.form,
+            layer = layui.layer;
+        //自定义验证规则
+        form.verify({
+            nikename: function(value) {
+                if (value.length < 2) {
+                    return '姓名至少得2个字符啊';
+                }
+            },
+            checkPassword: function(value) {
+                if (value.length>0){
+                    var passwordReg = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,16}$","ig");
+//			2.3 获取到password元素节点的value属性值
+//			2.4 判断value属性值是否匹配正则并进行相关处理
+                    if (value.length<6||value.length>16){
+                        return "密码必须为6-16位数字与字母组合";
+                    }
+                    if (!passwordReg.test(value)) {
+                        return "密码必须为6-16位数字与字母组合";
+                    }
+                }
+            }
+        });
+    });
     var $;
     var $form;
     var form;

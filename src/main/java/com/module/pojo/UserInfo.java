@@ -44,6 +44,11 @@ public class UserInfo {
      * 密码
      */
     private String password;
+
+    /**
+     * 密码
+     */
+    private String oldPassword;
     /**
      * 角色
      */
@@ -191,5 +196,13 @@ public class UserInfo {
      */
     public Date getCreatetime() {
         return createtime;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }
