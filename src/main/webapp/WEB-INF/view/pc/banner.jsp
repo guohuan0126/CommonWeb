@@ -11,6 +11,7 @@
         <div style="background-image: url('${ctx}/static/img/2.jpg');background-size:100% 100%; "></div>
         <div style="background-image: url('${ctx}/static/img/3.jpg');background-size:100% 100%; "></div>
         <div style="background-image: url('${ctx}/static/img/4.jpg');background-size:100% 100%; "></div>
+        <div style="background-image: url('${ctx}/static/img/5.jpg');background-size:100% 100%; "></div>
     </div>
 </div>
 <!-- 条目中可以是任意内容，如：<img src=""> -->
