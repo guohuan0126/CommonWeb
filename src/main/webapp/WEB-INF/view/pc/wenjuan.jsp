@@ -44,7 +44,7 @@
 
                                 <c:set value="${ fn:split(kk, '.') }" var="str2"/>
                                 <label style="font-size: 15px;">
-                                    <input type="radio" name="xx${item.id}" checked
+                                    <input type="radio" name="xx${item.id}"
                                            value="${str2[0]}.${str2[1]}"> ${str2[0]}.${str2[1]} </label> &nbsp;&nbsp;&nbsp;
 
                             </c:forEach>
