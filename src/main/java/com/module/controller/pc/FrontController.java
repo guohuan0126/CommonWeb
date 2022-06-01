@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -477,6 +478,11 @@ public class FrontController extends BaseController {
         }
         if (StringUtils.isBlank(userinfo.getPassword())) {
             return ResultUtil.error("登录密码不能为空");
+        }
+
+        List<UserInfo> userInfos = userinfoMapper.selectUserinfoList(userinfo);
+        if (!CollectionUtils.isEmpty(userInfos)){
+            return ResultUtil.error("用户名或手机号已存在，请更换后重新注册");
         }
         userinfo.setCreatetime(new Date());
         String password = userinfo.getPassword();

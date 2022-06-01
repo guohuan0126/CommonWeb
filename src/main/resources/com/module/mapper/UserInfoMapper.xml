@@ -21,6 +21,12 @@
     <select id="selectUserinfoList" parameterType="com.module.pojo.UserInfo" resultMap="UserinfoResult">
         select s.id,s.name,s.phone,s.email,s.money,s.picurl,s.sex,s.password,s.role,s.createtime from user_info s
         <where>
+            <if test="name != null and name != '' ">
+                and name=#{name}
+            </if>
+            <if test="phone != null and phone != '' ">
+                and phone=#{phone}
+            </if>
         </where>
     </select>
     <select id="selectUserinfoById" parameterType="Integer" resultMap="UserinfoResult">
